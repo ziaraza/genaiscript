@@ -1,5 +1,5 @@
 script({
-    description: "Generate a blog post for Dev.to from the documentation",
+    description: "Generate a detailed blog post for Dev.to from the documentation",
     system: [],
     tools: ["fs", "md"],
     parameters: {
@@ -23,17 +23,17 @@ if (!topic) {
             _.$`You are a blog writer expert on GenAIScript (https://microsoft.github.io/genaiscript).
 # Task
 
-Generate a blog post topic on the topic of writing and using a GenAIScript script.
+Generate a detailed blog post topic on the topic of writing and using a GenAIScript script.
 
 ${theme ? `- The theme of the blog post is ${theme}.` : ""}
 - Avoid repeating a topic already covered in the blog
-- do not generate outline, just the topic
+- please do generate an outline, along with the topics
 
 # Information
 
-Use these files to help you generate a topic for the blog post.
+You can use these files to help you create a topic for the blog post. This is a kind of heuristic for context.
 
-- the documentation is in markdown and has frontmatter: docs/src/content/docs/**/*.md*
+- The documentation is in markdown and has frontmatter: docs/src/content/docs/**/*.md*
 - the existing blog posts: docs/src/content/docs/blog/*.md*
 - the online documentation: https://microsoft.github.io/genaiscript/
 `
@@ -52,7 +52,7 @@ Use these files to help you generate a topic for the blog post.
     topic = res.text
 }
 
-// generate a working code snippet from topic
+// generate a working code snippet from the topics
 let snippet: string | Fenced
 {
     const { text, fences, error } = await runPrompt(
@@ -63,7 +63,7 @@ let snippet: string | Fenced
                 {
                     source: {
                         type: "string",
-                        description: "The GenAIScript javascript source code",
+                        description: "The GenAIScript JavaScript source code",
                     },
                 },
                 async ({ source }) => {
@@ -80,23 +80,23 @@ let snippet: string | Fenced
             )
 
             _.def("TOPIC", topic)
-            _.$`You are a JavaScript developer expert on GenAIScript (https://microsoft.github.io/genaiscript).
+            _.$`You are acting as a JavaScript developer expert on GenAIScript (https://microsoft.github.io/genaiscript).
 
         # Task
         
         - Generate a GenAIScript source code that implements the idea described in TOPIC.
-        - Validate syntax and checking with genaiscript_typecheck.
+        - Validate syntax and check with genaiscript_typecheck.
         - Respond ONLY with the JavaScript source code. Do NOT fence code in markdown. Do not add text around code.
-        - do not import "genaiscript" module, it is ambient.
+        - do not import " the genaiscript" module, it is ambient.
         
         # Information
         
         Use these files to help you generate a topic for the blog post.
  
-        - the code will be executed in node.js v20 by the GenAIScript CLI
+        - The code will be executed in node.js v20 by the GenAIScript CLI
         - the genaiscript type definition: genaisrc/genaiscript.d.ts. Assume that all globals are ambient. Do not import or require genaiscript module.
         - the genaiscript samples: packages/sample/src/*.genai.*
-        - the documentation is in markdown and has frontmatter: docs/src/content/docs/**/*.md*
+        - The documentation is in markdown and has frontmatter: docs/src/content/docs/**/*.md*
         - the online documentation: https://microsoft.github.io/genaiscript/
         `
         },
